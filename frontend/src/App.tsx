@@ -1,35 +1,58 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import ProceduralMap from "./components/ProceduralMap";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+function generateRandomCoordinate(center, radius) {
+  const randomAngle = Math.random() * Math.PI * 2;
+  const randomRadius = Math.random() * radius;
+  const offsetX = randomRadius * Math.cos(randomAngle);
+  const offsetY = randomRadius * Math.sin(randomAngle);
+  const lat = center[0] + offsetY / 111111;
+  const lng =
+    center[1] + offsetX / (111111 * Math.cos((center[0] * Math.PI) / 180));
+  return [lat, lng];
 }
 
-export default App
+function generateSmallPolyline(center, length, radius) {
+  const polyline = [];
+  let currentPoint = center;
+
+  for (let i = 0; i < length; i++) {
+    currentPoint = generateRandomCoordinate(currentPoint, radius);
+    polyline.push(currentPoint);
+  }
+
+  return polyline;
+}
+
+function generatePolylines(center, count, length, radius) {
+  const polylines = [];
+
+  for (let i = 0; i < count; i++) {
+    polylines.push(generateSmallPolyline(center, length, radius));
+  }
+
+  return polylines;
+}
+
+function App() {
+  const londonCoords = [51.5074, -0.1278];
+  const polylineCount = 200;
+  const polylineLength = 10;
+  const radius = 1000;
+
+  const polylines = generatePolylines(
+    londonCoords,
+    polylineCount,
+    polylineLength,
+    radius
+  );
+
+  return (
+    <div className="App" style={{ width: "50vw" }}>
+      <p>Procedural Map</p>
+      <ProceduralMap polylines={polylines} />
+    </div>
+  );
+}
+
+export default App;
