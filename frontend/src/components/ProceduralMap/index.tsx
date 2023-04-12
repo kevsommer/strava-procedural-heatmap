@@ -1,17 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Polyline } from "react-leaflet";
+import { useEffect, useState } from "react";
+import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-const ProceduralMap = ({ polylines }) => {
-  const [displayedPolylines, setDisplayedPolylines] = useState([]);
-  const interval = 500; // 500ms interval between mapping individual routes
+const MapContent = ({
+  polylines,
+  interval,
+}: {
+  polylines: number[][][];
+  interval: number;
+}) => {
+  const map = useMap();
+  const [displayedPolylines, setDisplayedPolylines] = useState<number[][][]>(
+    []
+  );
 
   useEffect(() => {
     let index = 0;
     const intervalId = setInterval(() => {
       if (index < polylines.length) {
-        setDisplayedPolylines((prevState) => polylines.slice(0, index + 1));
+        setDisplayedPolylines(polylines.slice(0, index + 1));
         index++;
+        if (!map.getBounds().intersects(polylines[index])) {
+          map.panTo(polylines[index][0]);
+        }
       } else {
         clearInterval(intervalId);
       }
@@ -21,20 +32,32 @@ const ProceduralMap = ({ polylines }) => {
   }, [polylines]);
 
   return (
-    <MapContainer
-      center={[51.505, -0.09]}
-      zoom={13}
-      style={{ height: "50vh", width: "100%" }}
-    >
+    <>
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {displayedPolylines.map((polyline, index) => (
-        <Polyline key={index} positions={polyline} />
+        <Polyline color={"red"} key={index} positions={polyline} />
       ))}
-    </MapContainer>
+    </>
   );
+};
+
+const ProceduralMap = ({ polylines }: { polylines: number[][][] }) => {
+  const [interval, setInterval] = useState(1000);
+  if (polylines.length !== 0)
+    return (
+      <>
+        <MapContainer
+          center={polylines[0][0]}
+          zoom={13}
+          style={{ height: "50vh", width: "100%" }}
+        >
+          <MapContent polylines={polylines} interval={interval} />
+        </MapContainer>
+      </>
+    );
 };
 
 export default ProceduralMap;
