@@ -18,27 +18,31 @@ const Map = () => {
     }
   }, [authToken, setAuthToken, setExpiresAt]);
 
+  const getActivities = ({ page }: { page: number }) => {
+    axios
+      .get("https://www.strava.com/api/v3/activities", {
+        params: {
+          access_token: authToken,
+          per_page: 200,
+          page: page,
+        },
+      })
+      .then((res) => {
+        const decodedPolylines = res.data.map(
+          (activity: { map: { summary_polyline: string } }) => {
+            return decode(activity.map.summary_polyline);
+          }
+        );
+        setPolylines([...polylines, ...decodedPolylines]);
+        if (res.data.length === 200) {
+          getActivities({ page: page + 1 });
+        }
+      });
+  };
+
   useEffect(() => {
     if (authToken) {
-      axios
-        .get(
-          "https://www.strava.com/api/v3/activities" +
-            "?access_token=" +
-            authToken +
-            "&per_page=200" +
-            "&page=" +
-            "1"
-        )
-        .then((res) => {
-          const decodedPolylines = res.data.map(
-            (activity: { map: { summary_polyline: string } }) => {
-              return decode(activity.map.summary_polyline);
-            }
-          );
-          setPolylines(decodedPolylines);
-
-          }
-        });
+      getActivities({ page: 1 });
       setPolylines(polylines.reverse());
     }
   }, [authToken]);
