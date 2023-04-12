@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from stravalib.client import Client
 import os
 from dotenv import load_dotenv
@@ -7,6 +8,17 @@ load_dotenv()
 
 app = FastAPI()
 client = Client()
+
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Change this to a list of allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Change this to a list of allowed HTTP methods
+    allow_headers=["*"],  # Change this to a list of allowed HTTP headers
+)
+
 
 # Environment Variables
 CLIENT_ID = os.getenv('CLIENT_ID')
