@@ -1,51 +1,47 @@
 import { useState, useEffect } from "react";
+import { decode } from "@googlemaps/polyline-codec";
+import axios from "axios";
 import ProceduralMap from "../../components/ProceduralMap";
+import { useAuth } from "../../context/AuthenticationProvider";
 
-function generateRandomCoordinate(center, radius) {
-  const randomAngle = Math.random() * Math.PI * 2;
-  const randomRadius = Math.random() * radius;
-  const offsetX = randomRadius * Math.cos(randomAngle);
-  const offsetY = randomRadius * Math.sin(randomAngle);
-  const lat = center[0] + offsetY / 111111;
-  const lng =
-    center[1] + offsetX / (111111 * Math.cos((center[0] * Math.PI) / 180));
-  return [lat, lng];
-}
+const apiUrl = import.meta.env.VITE_API_URL;
 
-function generateSmallPolyline(center, length, radius) {
-  const polyline = [];
-  let currentPoint = center;
+const Map = () => {
+  const { authToken, setAuthToken, setExpiresAt } = useAuth();
+  const [polylines, setPolylines] = useState<number[][][]>([]);
 
-  for (let i = 0; i < length; i++) {
-    currentPoint = generateRandomCoordinate(currentPoint, radius);
-    polyline.push(currentPoint);
-  }
+  useEffect(() => {
+    if (!authToken) {
+      axios
+        .get(`${apiUrl}`)
+        .then((res) => window.location.replace(res.data.url));
+    }
+  }, [authToken, setAuthToken, setExpiresAt]);
 
-  return polyline;
-}
+  useEffect(() => {
+    if (authToken) {
+      axios
+        .get(
+          "https://www.strava.com/api/v3/activities" +
+            "?access_token=" +
+            authToken +
+            "&per_page=200" +
+            "&page=" +
+            "1"
+        )
+        .then((res) => {
+          const decodedPolylines = res.data.map(
+            (activity: { map: { summary_polyline: string } }) => {
+              return decode(activity.map.summary_polyline);
+            }
+          );
+          setPolylines(decodedPolylines);
 
-function generatePolylines(center, count, length, radius) {
-  const polylines = [];
-
-  for (let i = 0; i < count; i++) {
-    polylines.push(generateSmallPolyline(center, length, radius));
-  }
-
-  return polylines;
-}
-
-const Map: React.FC = () => {
-  const londonCoords = [51.5074, -0.1278];
-  const polylineCount = 50;
-  const polylineLength = 10;
-  const radius = 1000;
-
-  const polylines = generatePolylines(
-    londonCoords,
-    polylineCount,
-    polylineLength,
-    radius
-  );
+          }
+        });
+      setPolylines(polylines.reverse());
+    }
+  }, [authToken]);
 
   return (
     <div>
