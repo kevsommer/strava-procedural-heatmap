@@ -26,7 +26,7 @@ function App() {
 
   useEffect(() => {
     if (expiresAt) {
-      if (Math.floor(Date.now() / 1000) > expiresAt) {
+      if (Math.floor(Date.now() / 1000) > parseInt(expiresAt)) {
         setExpireDate("");
         setToken("");
       }
