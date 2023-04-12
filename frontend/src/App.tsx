@@ -1,23 +1,22 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import Map from "./pages/Map";
 
 function App() {
-  const londonCoords = [51.5074, -0.1278];
-  const polylineCount = 200;
-  const polylineLength = 10;
-  const radius = 1000;
-
-  const polylines = generatePolylines(
-    londonCoords,
-    polylineCount,
-    polylineLength,
-    radius
-  );
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <div>Hello world!</div>,
+    },
+    {
+      path: "/map",
+      element: <Map />,
+    },
+  ]);
 
   return (
     <div className="App" style={{ width: "50vw" }}>
-      <p>Procedural Map</p>
-      <ProceduralMap polylines={polylines} />
+      <RouterProvider router={router} />
     </div>
   );
 }
