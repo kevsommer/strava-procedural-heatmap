@@ -52,7 +52,7 @@ const ProceduralMap = ({ polylines }: { polylines: number[][][] }) => {
         <MapContainer
           center={polylines[0][0]}
           zoom={13}
-          style={{ height: "50vh", width: "100%" }}
+        style={{ height: "100vh", width: "100vw" }}
         >
           <MapContent polylines={polylines} interval={interval} />
         </MapContainer>
