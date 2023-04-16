@@ -49,7 +49,7 @@ const MapContent = ({
 };
 
 const ProceduralMap = ({ activities }: { activities: any[] }) => {
-  const [interval, setInterval] = useState(200);
+  const [interval, setInterval] = useState(500);
   const [polylines, setPolylines] = useState<any>([]);
 
   useEffect(() => {
