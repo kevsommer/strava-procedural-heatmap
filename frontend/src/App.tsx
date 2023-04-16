@@ -9,6 +9,7 @@ import { AuthContext } from "./context/AuthenticationProvider";
 import Map from "./pages/Map";
 import Auth from "./pages/Auth";
 import Code from "./pages/Code";
+import Landing from "./pages/Landing";
 
 function App() {
   const [authToken, setAuthToken] = useState("");
@@ -36,13 +37,9 @@ function App() {
   const BrowserRouter = createBrowserRouter([
     {
       path: "/",
-      element: <Map />,
+      element: <Landing />,
       loader: () => {
-        if (authToken) {
-          return <Map />;
-        } else {
-          return redirect("/code");
-        }
+        return <Landing />;
       },
     },
     {
@@ -74,7 +71,7 @@ function App() {
   ]);
 
   return (
-    <div className="App" style={{ width: "50vw" }}>
+    <div className="App" style={{ width: "100vw" }}>
       <AuthContext.Provider
         value={{
           authToken,
