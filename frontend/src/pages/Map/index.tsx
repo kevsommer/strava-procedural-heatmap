@@ -8,7 +8,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
 const Map = () => {
   const { authToken, setAuthToken, setExpiresAt } = useAuth();
-  const [polylines, setPolylines] = useState<number[][][]>([]);
+  const [ready, setReady] = useState(false);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     if (!authToken) {
@@ -19,40 +20,45 @@ const Map = () => {
   }, [authToken, setAuthToken, setExpiresAt]);
 
   const getActivities = ({ page }: { page: number }) => {
-    axios
-      .get("https://www.strava.com/api/v3/activities", {
-        params: {
-          access_token: authToken,
-          per_page: 200,
-          page: page,
-        },
-      })
-      .then((res) => {
-        const decodedPolylines = res.data.map(
-          (activity: { map: { summary_polyline: string } }) => {
-            return decode(activity.map.summary_polyline);
+    let fetchedActivities: any[] = [];
+
+    const fetchActivitiesPage = (page: number) => {
+      axios
+        .get("https://www.strava.com/api/v3/activities", {
+          params: {
+            access_token: authToken,
+            per_page: 200,
+            page: page,
+          },
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            fetchedActivities = [...res.data.reverse(), ...fetchedActivities];
+
+            if (res.data.length === 200) {
+              fetchActivitiesPage(page + 1);
+            } else {
+              setActivities(fetchedActivities);
+              setReady(true);
+            }
           }
-        );
-        setPolylines([...polylines, ...decodedPolylines]);
-        if (res.data.length === 200) {
-          getActivities({ page: page + 1 });
-        }
-      });
+        })
+        .catch((error) => {
+          console.error("Error fetching activities:", error);
+        });
+    };
+
+    fetchActivitiesPage(page);
   };
 
   useEffect(() => {
     if (authToken) {
       getActivities({ page: 1 });
-      setPolylines(polylines.reverse());
     }
   }, [authToken]);
 
-  return (
-    <div>
-      <h1>Map</h1>
-      <ProceduralMap polylines={polylines} />
-    </div>
-  );
+  if (ready) return <ProceduralMap activities={activities} />;
+  return <div />;
 };
 
 export default Map;
