@@ -26,14 +26,14 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 REDIRECT_URL = os.getenv('REDIRECT_URL')
 
 
-@app.get("/")
+@app.get("/api/")
 def read_root():
     authorize_url = client.authorization_url(
         client_id=CLIENT_ID, redirect_uri=REDIRECT_URL)
     return {"url": authorize_url}
 
 
-@app.get("/authorised/")
+@app.get("/api/authorised/")
 def get_code(code=None):
     token_response = client.exchange_code_for_token(
         client_id=CLIENT_ID, client_secret=CLIENT_SECRET, code=code)
