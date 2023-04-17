@@ -1,10 +1,12 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
+import { Box, CircularProgress } from "@mui/material";
 import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import { decode } from "@googlemaps/polyline-codec";
 import "leaflet/dist/leaflet.css";
 import { createControlComponent } from "@react-leaflet/core";
 import L from "leaflet";
+import Loading from "../Loading";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -135,7 +137,7 @@ const ProceduralMap = ({ activities }: { activities: any[] }) => {
       </MapContainer>
     );
   }
-  return <div>Loading...</div>;
+  return <Loading />;
 };
 
 export default ProceduralMap;

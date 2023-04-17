@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { decode } from "@googlemaps/polyline-codec";
 import axios from "axios";
 import ProceduralMap from "../../components/ProceduralMap";
+import Loading from "../../components/Loading";
 import { useAuth } from "../../context/AuthenticationProvider";
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -58,7 +58,7 @@ const Map = () => {
   }, [authToken]);
 
   if (ready) return <ProceduralMap activities={activities} />;
-  return <div />;
+  return <Loading />;
 };
 
 export default Map;
