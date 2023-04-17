@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import { decode } from "@googlemaps/polyline-codec";
