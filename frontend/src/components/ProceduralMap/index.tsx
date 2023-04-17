@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { Box, CircularProgress } from "@mui/material";
 import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import { decode } from "@googlemaps/polyline-codec";
 import "leaflet/dist/leaflet.css";
@@ -17,7 +16,6 @@ const formatDate = (dateString: string) => {
 
   const hours = ("0" + date.getHours()).slice(-2); // Pad with a leading 0 if needed
   const minutes = ("0" + date.getMinutes()).slice(-2); // Pad with a leading 0 if needed
-  const seconds = ("0" + date.getSeconds()).slice(-2); // Pad with a leading 0 if needed
 
   // Format the date string as desired
   const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
@@ -32,23 +30,19 @@ const MapContent = ({
   polylines: any[];
   interval: number;
 }) => {
+  const [displayIndex, setDisplayIndex] = useState(1);
   const map = useMap();
-  const [displayedPolylines, setDisplayedPolylines] = useState<number[][][]>(
-    []
-  );
 
   useEffect(() => {
     if (polylines.length === 0) return;
     let index = 0;
+    setDisplayIndex(1);
     const intervalId = setInterval(() => {
-      if (index < polylines.length) {
-        setDisplayedPolylines(
-          polylines.slice(0, index + 1).map((polyline) => polyline.polyline)
-        );
-        if (!map.getBounds().intersects(polylines[index].polyline)) {
-          map.panTo(polylines[index].polyline[0]);
+      if (displayIndex < polylines.length) {
+        if (!map.getBounds().intersects(polylines[displayIndex].polyline)) {
+          map.panTo(polylines[displayIndex].polyline[0]);
         }
-        index++;
+        setDisplayIndex(index + 1);
       } else {
         clearInterval(intervalId);
       }
@@ -73,32 +67,31 @@ const MapContent = ({
     return textControl;
   });
 
-  if (displayedPolylines.length !== 0)
-    return (
-      <>
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        {displayedPolylines.map((polyline, index) => (
+  return (
+    <>
+      <TileLayer
+        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      {polylines
+        .slice(0, displayIndex + 1)
+        .map((polyline) => polyline.polyline)
+        .map((polyline, index) => (
           <Polyline color={"red"} key={index} positions={polyline} />
         ))}
-        <TextControl
-          position="topleft"
-          text={`${polylines[displayedPolylines.length - 1].name} - ${
-            Math.round(polylines[displayedPolylines.length - 1].distance / 10) /
-            100
-          } km`}
-        />
+      <TextControl
+        position="topleft"
+        text={`${polylines[displayIndex - 1].name} - ${
+          Math.round(polylines[displayIndex - 1].distance / 10) / 100
+        } km`}
+      />
 
-        <TextControl
-          position="topleft"
-          text={`${formatDate(
-            polylines[displayedPolylines.length - 1].start_date_local
-          )}`}
-        />
-      </>
-    );
+      <TextControl
+        position="topleft"
+        text={`${formatDate(polylines[displayIndex - 1].start_date_local)}`}
+      />
+    </>
+  );
 };
 
 const ProceduralMap = ({ activities }: { activities: any[] }) => {
