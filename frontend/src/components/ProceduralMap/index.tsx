@@ -38,11 +38,12 @@ const MapContent = ({
     let index = 0;
     setDisplayIndex(1);
     const intervalId = setInterval(() => {
-      if (displayIndex < polylines.length) {
-        if (!map.getBounds().intersects(polylines[displayIndex].polyline)) {
-          map.panTo(polylines[displayIndex].polyline[0]);
+      if (index < polylines.length) {
+        if (!map.getBounds().intersects(polylines[index].polyline)) {
+          map.panTo(polylines[index].polyline[0]);
         }
-        setDisplayIndex(index + 1);
+        setDisplayIndex((prev) => prev + 1);
+        index++;
       } else {
         clearInterval(intervalId);
       }
