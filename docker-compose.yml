@@ -1,0 +1,8 @@
+services:
+  heatmap-frontend:
+    container_name: heatmap-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
