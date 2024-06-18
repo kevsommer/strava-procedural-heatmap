@@ -6,3 +6,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
+  heatmap-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
