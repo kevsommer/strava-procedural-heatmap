@@ -28,6 +28,7 @@ REDIRECT_URL = os.getenv('REDIRECT_URL')
 
 @app.get("/api/")
 def read_root():
+    print('api route called')
     authorize_url = client.authorization_url(
         client_id=CLIENT_ID, redirect_uri=REDIRECT_URL)
     return {"url": authorize_url}
