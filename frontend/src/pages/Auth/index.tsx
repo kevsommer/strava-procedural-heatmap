@@ -24,12 +24,6 @@ const Auth = () => {
     }
   }, [setAuthToken, setExpiresAt]);
 
-  useEffect(() => {
-    if (authToken) {
-      window.location.replace("/map");
-    }
-  }, [authToken]);
-
   return <Loading />;
 };
 
