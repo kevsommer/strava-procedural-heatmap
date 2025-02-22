@@ -1,11 +1,11 @@
 // @ts-nocheck
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import { decode } from "@googlemaps/polyline-codec";
-import "leaflet/dist/leaflet.css";
 import { createControlComponent } from "@react-leaflet/core";
-import L from "leaflet";
+import { MapContainer, TileLayer, Polyline, useMap } from "react-leaflet";
 import Loading from "../Loading";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);

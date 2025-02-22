@@ -1,0 +1,16 @@
+.c-landing-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 3;
+  margin: 0 auto;
+}
+
+.c-landing-page__button {
+  font-weight: bold;
+  font-size: large;
+  background-color: pink;
+}
