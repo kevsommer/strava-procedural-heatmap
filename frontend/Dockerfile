@@ -1,16 +1,18 @@
-FROM node:18-alpine
+FROM oven/bun:latest
 
 WORKDIR ./
 
-COPY package*.json ./
+COPY package.json ./
+COPY bun.lockb ./
+COPY src  ./
 
-RUN yarn install
+RUN bun install
 
 COPY . .
 
-RUN yarn run build
+RUN bun run build
 
-RUN yarn global add serve
+RUN bun add -g serve
 
 EXPOSE 3001
 
