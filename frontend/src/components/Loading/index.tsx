@@ -1,8 +1,8 @@
-import { CircularProgress } from "@mui/material";
+import "./Loading.css";
 
 const Loading = () => (
   <div className="c-loading">
-    <CircularProgress color="secondary" size={200} />
+    <div className="c-loading__spinner" />
   </div>
 );
 
