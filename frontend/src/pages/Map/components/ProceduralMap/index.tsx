@@ -2,8 +2,7 @@
 import { useEffect, useState } from "react";
 import { decode } from "@googlemaps/polyline-codec";
 import { MapContainer } from "react-leaflet";
-import { formatDate } from "./utils";
-import Loading from "../Loading";
+import Loading from "../../../../components/Loading";
 import MapContent from "../MapContent";
 
 const ProceduralMap = ({ activities }: { activities: any[] }) => {

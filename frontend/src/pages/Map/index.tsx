@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import ProceduralMap from "../../components/ProceduralMap";
-import Loading from "../../components/Loading";
 import { useAuth } from "../../context/AuthenticationProvider";
+import axios from "axios";
+import ProceduralMap from "./components/ProceduralMap";
+import Loading from "../../components/Loading";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
