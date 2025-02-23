@@ -32,7 +32,7 @@ export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
   const [isRunning, setIsRunning] = useState<boolean>(true);
 
   const isRunningRef = useRef(isRunning);
-  const intervalRef = useRef(null);
+  const intervalRef = useRef<number | null>(null);
   const indexRef = useRef(0);
   const map = useMap();
 
@@ -60,11 +60,11 @@ export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
           indexRef.current++;
         }
       } else {
-        clearInterval(intervalRef.current);
+        clearInterval(intervalRef.current as number);
       }
     }, interval);
 
-    return () => clearInterval(intervalRef.current);
+    return () => clearInterval(intervalRef.current as number);
   }, [polylines]);
 
   const mappedPolylines = polylines
