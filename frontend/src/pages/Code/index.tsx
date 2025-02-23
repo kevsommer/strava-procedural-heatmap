@@ -11,7 +11,6 @@ const Code = () => {
   useEffect(() => {
     if (!authToken) {
       axios.get(`${apiUrl}`).then((res) => {
-        console.log("res.data.url", res.data.url);
         window.location.replace(res.data.url);
       });
     }
