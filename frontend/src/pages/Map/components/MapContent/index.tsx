@@ -1,8 +1,8 @@
 // @ts-nocheck
-import { useState, useEffect } from 'react';
-import { formatDate } from "./utils";
+import { formatDate, useMapAnimation, type Polyline } from "./utils";
 import { createControlComponent } from "@react-leaflet/core";
-import { Polyline, TileLayer, useMap } from "react-leaflet";
+import { Polyline, TileLayer } from "react-leaflet";
+import "./MapContent.css";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -10,31 +10,11 @@ const MapContent = ({
   polylines,
   interval,
 }: {
-  polylines: any[];
+  polylines: Polylines[];
   interval: number;
 }) => {
-  const [displayIndex, setDisplayIndex] = useState(1);
-  const map = useMap();
-
-  useEffect(() => {
-    if (polylines.length === 0) return;
-    let index = 0;
-    setDisplayIndex(1);
-    const intervalId = setInterval(() => {
-      if (index < polylines.length) {
-        if (!map.getBounds().intersects(polylines[index].polyline)) {
-          map.panTo(polylines[index].polyline[0]);
-        }
-        setDisplayIndex((prev) => prev + 1);
-        index++;
-      } else {
-        clearInterval(intervalId);
-      }
-    }, interval);
-
-    return () => clearInterval(intervalId);
-  }, [polylines]);
-
+  const { mappedPolylines, displayIndex, isRunning, toggleRunningState} = useMapAnimation({polylines, interval});
+ 
   const TextControl = createControlComponent((props) => {
     const textControl = L.control(props);
     textControl.onAdd = () => {
@@ -51,12 +31,11 @@ const MapContent = ({
     return textControl;
   });
 
-  const mappedPolylines = polylines
-        .slice(0, displayIndex + 1)
-        .map((polyline) => polyline.polyline);
-
   return (
     <>
+      <div className="c-map-content__controls">
+        <button className="c-map-content__control-button" onClick={toggleRunningState}>{ isRunning ? "Stop" : "Start" }</button>
+      </div>
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

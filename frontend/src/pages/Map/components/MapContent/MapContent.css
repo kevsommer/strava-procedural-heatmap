@@ -1,0 +1,14 @@
+.c-map-content__controls {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translate(-50%);
+  z-index: 1000;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 0.5rem;
+}
+
+.c-map-content__control-button {
+  background-color: grey;
+}

@@ -1,3 +1,16 @@
+import { useState, useEffect, useRef } from 'react';
+import { useMap } from "react-leaflet";
+
+export type Polyline = {
+  polyline: string
+}
+
+type MapAnimationParams = {
+  polylines: Polyline[],
+  interval: 500,
+  isRunning: boolean;
+}
+
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
 
@@ -12,5 +25,52 @@ export const formatDate = (dateString: string) => {
   const formattedDate = `${day}.${month}.${year} ${hours}:${minutes}`;
 
   return formattedDate;
+};
+
+export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
+  const [displayIndex, setDisplayIndex] = useState(1);
+  const [isRunning, setIsRunning] = useState<boolean>(true);
+
+  const isRunningRef = useRef(isRunning);
+  const intervalRef = useRef(null);
+  const indexRef = useRef(0);
+  const map = useMap();
+
+  function toggleRunningState() {
+    setIsRunning(prev => !prev);
+    isRunningRef.current = !isRunningRef.current;
+  }
+
+  useEffect(() => {
+    isRunningRef.current = isRunning;
+  }, [isRunning]);
+ 
+  useEffect(() => {
+    if (polylines.length === 0) return;
+
+    setDisplayIndex(1);
+    intervalRef.current = setInterval(() => {
+      if (indexRef.current < polylines.length) {
+        if (!map.getBounds().intersects(polylines[indexRef.current].polyline)) {
+          map.panTo(polylines[indexRef.current].polyline[0]);
+        }
+
+        if (isRunningRef.current) {
+          setDisplayIndex((prev) => prev + 1);
+          indexRef.current++;
+        }
+      } else {
+        clearInterval(intervalRef.current);
+      }
+    }, interval);
+
+    return () => clearInterval(intervalRef.current);
+  }, [polylines]);
+
+  const mappedPolylines = polylines
+        .slice(0, displayIndex + 1)
+        .map((polyline) => polyline.polyline);
+  
+  return { mappedPolylines, displayIndex, isRunning, toggleRunningState};
 };
 
