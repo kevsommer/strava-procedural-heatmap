@@ -28,9 +28,9 @@ export const formatDate = (dateString: string) => {
 };
 
 export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => {
+  const [displayIndex, setDisplayIndex] = useState(0);
   const [isRunning, setIsRunning] = useState<boolean>(true);
 
-  const displayIndex = useRef<number>(1);
   const isRunningRef = useRef(isRunning);
   const intervalRef = useRef<number | null>(null);
   const indexRef = useRef(0);
@@ -55,7 +55,7 @@ export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => 
             map.panTo(polylines[indexRef.current].polyline[0]);
           }
 
-          displayIndex.current++;
+          setDisplayIndex((prev) => prev + 1);
           indexRef.current++;
         }
       } else {
@@ -67,7 +67,7 @@ export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => 
   }, [polylines]);
 
   const mappedPolylines = polylines
-    .slice(0, displayIndex.current + 1)
+    .slice(0, displayIndex + 1)
     .map((polyline) => polyline.polyline);
 
   return { mappedPolylines, displayIndex, isRunning, toggleRunningState };

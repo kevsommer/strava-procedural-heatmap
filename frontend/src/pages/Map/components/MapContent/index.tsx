@@ -46,13 +46,13 @@ const MapContent = ({
         ))}
       <TextControl
         position="topleft"
-        text={`${polylines[displayIndex.current - 1].name} - ${Math.round(polylines[displayIndex.current - 1].distance / 10) / 100
+        text={`${polylines[displayIndex].name} - ${Math.round(polylines[displayIndex].distance / 10) / 100
           } km`}
       />
 
       <TextControl
         position="topleft"
-        text={`${formatDate(polylines[displayIndex.current - 1].start_date_local)}`}
+        text={`${formatDate(polylines[displayIndex].start_date_local)}`}
       />
     </>
   );
