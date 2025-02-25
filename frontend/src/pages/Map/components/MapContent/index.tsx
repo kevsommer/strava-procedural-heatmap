@@ -13,8 +13,8 @@ const MapContent = ({
   polylines: Polylines[];
   interval: number;
 }) => {
-  const { mappedPolylines, displayIndex, isRunning, toggleRunningState} = useMapAnimation({polylines, interval});
- 
+  const { mappedPolylines, displayIndex, isRunning, toggleRunningState } = useMapAnimation({ polylines, interval });
+
   const TextControl = createControlComponent((props) => {
     const textControl = L.control(props);
     textControl.onAdd = () => {
@@ -34,7 +34,7 @@ const MapContent = ({
   return (
     <>
       <div className="c-map-content__controls">
-        <button className="c-map-content__control-button" onClick={toggleRunningState}>{ isRunning ? "Stop" : "Start" }</button>
+        <button className="c-map-content__control-button" onClick={toggleRunningState}>{isRunning ? "Stop" : "Start"}</button>
       </div>
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -46,14 +46,13 @@ const MapContent = ({
         ))}
       <TextControl
         position="topleft"
-        text={`${polylines[displayIndex - 1].name} - ${
-          Math.round(polylines[displayIndex - 1].distance / 10) / 100
-        } km`}
+        text={`${polylines[displayIndex.current - 1].name} - ${Math.round(polylines[displayIndex.current - 1].distance / 10) / 100
+          } km`}
       />
 
       <TextControl
         position="topleft"
-        text={`${formatDate(polylines[displayIndex - 1].start_date_local)}`}
+        text={`${formatDate(polylines[displayIndex.current - 1].start_date_local)}`}
       />
     </>
   );

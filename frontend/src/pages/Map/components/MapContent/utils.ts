@@ -27,10 +27,10 @@ export const formatDate = (dateString: string) => {
   return formattedDate;
 };
 
-export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
-  const [displayIndex, setDisplayIndex] = useState(1);
+export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => {
   const [isRunning, setIsRunning] = useState<boolean>(true);
 
+  const displayIndex = useRef<number>(1);
   const isRunningRef = useRef(isRunning);
   const intervalRef = useRef<number | null>(null);
   const indexRef = useRef(0);
@@ -44,19 +44,18 @@ export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
   useEffect(() => {
     isRunningRef.current = isRunning;
   }, [isRunning]);
- 
+
   useEffect(() => {
     if (polylines.length === 0) return;
 
-    setDisplayIndex(1);
     intervalRef.current = setInterval(() => {
       if (indexRef.current < polylines.length) {
-        if (!map.getBounds().intersects(polylines[indexRef.current].polyline)) {
-          map.panTo(polylines[indexRef.current].polyline[0]);
-        }
-
         if (isRunningRef.current) {
-          setDisplayIndex((prev) => prev + 1);
+          if (!map.getBounds().intersects(polylines[indexRef.current].polyline)) {
+            map.panTo(polylines[indexRef.current].polyline[0]);
+          }
+
+          displayIndex.current++;
           indexRef.current++;
         }
       } else {
@@ -68,9 +67,9 @@ export const useMapAnimation = ({polylines, interval }: MapAnimationParams) => {
   }, [polylines]);
 
   const mappedPolylines = polylines
-        .slice(0, displayIndex + 1)
-        .map((polyline) => polyline.polyline);
-  
-  return { mappedPolylines, displayIndex, isRunning, toggleRunningState};
+    .slice(0, displayIndex.current + 1)
+    .map((polyline) => polyline.polyline);
+
+  return { mappedPolylines, displayIndex, isRunning, toggleRunningState };
 };
 
