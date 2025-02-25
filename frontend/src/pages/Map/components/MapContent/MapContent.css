@@ -4,11 +4,15 @@
   left: 50%;
   transform: translate(-50%);
   z-index: 1000;
+
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
   font-size: 1.5rem;
   font-weight: 700;
-  border-radius: 0.5rem;
 }
 
 .c-map-content__control-button {
-  background-color: grey;
+  background-color: pink;
+  border: 1px solid hotpink;
 }

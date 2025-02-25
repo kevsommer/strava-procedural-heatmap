@@ -13,7 +13,7 @@ const MapContent = ({
   polylines: Polylines[];
   interval: number;
 }) => {
-  const { mappedPolylines, displayIndex, isRunning, toggleRunningState } = useMapAnimation({ polylines, interval });
+  const { mappedPolylines, displayIndex, setDisplayIndex, indexRef, isRunning, toggleRunningState } = useMapAnimation({ polylines, interval });
 
   const TextControl = createControlComponent((props) => {
     const textControl = L.control(props);
@@ -31,19 +31,33 @@ const MapContent = ({
     return textControl;
   });
 
+  function handlePrevClick() {
+    indexRef.current = Math.max(indexRef.current - 1, 0);
+    setDisplayIndex(Math.max(displayIndex - 1, 1));
+  }
+
+  function handleNextClick() {
+    indexRef.current++;
+    setDisplayIndex(displayIndex + 1);
+  }
+
   return (
     <>
       <div className="c-map-content__controls">
+        {!isRunning && <button className="c-map-content__control-button" onClick={handlePrevClick}>Prev</button>}
         <button className="c-map-content__control-button" onClick={toggleRunningState}>{isRunning ? "Stop" : "Start"}</button>
+        {!isRunning && <button className="c-map-content__control-button" onClick={handleNextClick}>Next</button>}
       </div>
       <TileLayer
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {mappedPolylines
+        .slice(0, -1)
         .map((polyline, index) => (
           <Polyline color={"red"} key={index} positions={polyline} />
         ))}
+      <Polyline color={"purple"} weight={5} key="last" positions={mappedPolylines.at(-1)} />
       <TextControl
         position="topleft"
         text={`${polylines[displayIndex].name} - ${Math.round(polylines[displayIndex].distance / 10) / 100

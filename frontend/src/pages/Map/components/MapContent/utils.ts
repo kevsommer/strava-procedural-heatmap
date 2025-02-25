@@ -55,8 +55,8 @@ export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => 
             map.panTo(polylines[indexRef.current].polyline[0]);
           }
 
-          setDisplayIndex((prev) => prev + 1);
           indexRef.current++;
+          setDisplayIndex((prev) => prev + 1);
         }
       } else {
         clearInterval(intervalRef.current as number);
@@ -70,6 +70,6 @@ export const useMapAnimation = ({ polylines, interval }: MapAnimationParams) => 
     .slice(0, displayIndex + 1)
     .map((polyline) => polyline.polyline);
 
-  return { mappedPolylines, displayIndex, isRunning, toggleRunningState };
+  return { mappedPolylines, displayIndex, setDisplayIndex, indexRef, isRunning, toggleRunningState };
 };
 
